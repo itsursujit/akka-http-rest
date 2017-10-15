@@ -20,12 +20,12 @@ class AuthService(
     authDataStorage
       .findAuthData(login)
       .filterT(_.password == password.sha256.hex)
-      .mapT(authData => encodeToken(authData.id))
+      .mapT(authData => encodeToken(authData.uuid))
 
   def signUp(login: String, email: String, password: String): Future[AuthToken] =
     authDataStorage
-      .saveAuthData(AuthData(UUID.randomUUID().toString, login, email, password.sha256.hex))
-      .map(authData => encodeToken(authData.id))
+      .saveAuthData(AuthData(None, login, email, password.sha256.hex,UUID.randomUUID().toString))
+      .map(authData => encodeToken(authData.uuid))
 
   private def encodeToken(userId: UserId): AuthToken =
     Jwt.encode(AuthTokenContent(userId).asJson.noSpaces, secretKey, JwtAlgorithm.HS256)

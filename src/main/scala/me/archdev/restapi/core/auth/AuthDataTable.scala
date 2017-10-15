@@ -9,12 +9,13 @@ private[auth] trait AuthDataTable {
   import databaseConnector.profile.api._
 
   class AuthDataSchema(tag: Tag) extends Table[AuthData](tag, "auth") {
-    def id = column[String]("id", O.PrimaryKey)
+    def id = column[Option[Long]]("id", O.PrimaryKey, O.AutoInc)
     def username = column[String]("username")
     def email = column[String]("email")
     def password = column[String]("password")
+    def uuid = column[String]("uuid")
 
-    def * = (id, username, email, password) <> ((AuthData.apply _).tupled, AuthData.unapply)
+    def * = (id, username, email, password, uuid) <> ((AuthData.apply _).tupled, AuthData.unapply)
   }
 
   protected val auth = TableQuery[AuthDataSchema]
